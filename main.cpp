@@ -37,23 +37,14 @@ HHOOK hHook = NULL;
 
 LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
-	LPMSLLHOOKSTRUCT mhook = (LPMSLLHOOKSTRUCT)lParam;
-	if (nCode == HC_ACTION && (wParam == WM_XBUTTONDOWN || (wParam == WM_XBUTTONUP)))
-	{
-		mhook->flags = 0;
-		mhook->pt.x = 0;
-		mhook->pt.y = 0;
-		mhook->mouseData = WM_NULL;
-		mhook->dwExtraInfo = 0;
-		mhook->time = 0;
+	if (nCode == HC_ACTION && (wParam == WM_XBUTTONDOWN || wParam == WM_XBUTTONUP))
 		return -1;
-	}
 	return CallNextHookEx(hHook, nCode, wParam, lParam);
 }
 
 void pluginInit(HANDLE /*hModule*/)
 {
-	hHook = SetWindowsHookEx(WH_MOUSE_LL, (HOOKPROC)&LowLevelMouseProc, 0, 0);
+	hHook = SetWindowsHookEx(WH_MOUSE, (HOOKPROC)&LowLevelMouseProc, 0, 0);
 }
 
 void pluginCleanUp()
