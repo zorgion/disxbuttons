@@ -35,16 +35,20 @@ NppData nppData;
 
 HHOOK hHook = NULL;
 
-LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK MouseProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
 	if (nCode == HC_ACTION && (wParam == WM_XBUTTONDOWN || wParam == WM_XBUTTONUP))
-		return -1;
+	{ 
+		wParam = WM_NULL;
+		lParam = 0;
+		return 1;
+	}
 	return CallNextHookEx(hHook, nCode, wParam, lParam);
 }
 
 void pluginInit(HANDLE /*hModule*/)
 {
-	hHook = SetWindowsHookEx(WH_MOUSE, (HOOKPROC)&LowLevelMouseProc, 0, 0);
+	hHook = SetWindowsHookEx(WH_MOUSE, (HOOKPROC)&MouseProc, 0, GetCurrentThreadId());
 }
 
 void pluginCleanUp()
